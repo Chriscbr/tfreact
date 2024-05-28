@@ -96,7 +96,6 @@ export const setTextNodeValue = (node: TextNode, text: string): void => {
 };
 
 export function renderNode(rootNode: DOMElement): string {
-  console.log("renderNode called");
   const children = rootNode.childNodes.map((child) => {
     if (child.nodeName === "#text") {
       return child.nodeValue;

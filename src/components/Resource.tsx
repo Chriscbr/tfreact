@@ -13,3 +13,23 @@ export const Resource = forwardRef<React.ReactElement, ResourceProps>(
     );
   },
 );
+
+export type AutoResourceProps = {
+  readonly type: string;
+  readonly id: string | (() => [any, string]);
+  readonly args?: Record<string, any>;
+};
+
+export function AutoResource({
+  type,
+  id,
+  args,
+}: AutoResourceProps): JSX.Element {
+  if (typeof id === "string") {
+    return <Resource type={type} id={id} args={args} />;
+  } else {
+    // assume id is a function
+    const [handleRef, actualId] = id();
+    return <Resource type={type} id={actualId} args={args} ref={handleRef} />;
+  }
+}
