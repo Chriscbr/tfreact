@@ -208,3 +208,67 @@ resource "aws_instance" "myInstance" {
   depends_on = [null]
 }`);
 });
+
+// test("<Resource> with <Ref>", () => {
+//   function App() {
+//     const role = <aws.IamRole id="example" assume_role_policy="..." />;
+//     const instanceProfile = (
+//       <aws.IamInstanceProfile
+//         id="example"
+//         role={<Ref res={role} attribute="name" />}
+//       />
+//     );
+
+//     const policy = {
+//       Version: "2012-10-17",
+//       Statement: [{ Effect: "Allow", Action: "s3:*" }],
+//     };
+//     const rolePolicy = (
+//       <aws.IamRolePolicy
+//         id="example"
+//         role={<Ref res={role} attribute="name" />}
+//         policy={policy}
+//       />
+//     );
+
+//     const instance = (
+//       <aws.Instance
+//         id="myInstance"
+//         ami="ami-a1b2c3d4"
+//         instance_type="t2.micro"
+//         iam_instance_profile={<Ref res={instanceProfile} attribute="name" />}
+//         depends_on={[rolePolicy]}
+//       />
+//     );
+
+//     return (
+//       <>
+//         {role}
+//         {instanceProfile}
+//         {rolePolicy}
+//         {instance}
+//       </>
+//     );
+//   }
+
+//   const output = renderToString(<App />);
+//   expect(output).toEqual(`resource "aws_iam_role" "example" {
+//   assume_role_policy = "..."
+// }
+
+// resource "aws_iam_instance_profile" "example" {
+//   role = "\${aws_iam_role.example.name}"
+// }
+
+// resource "aws_iam_role_policy" "example" {
+//   role = "\${aws_iam_role.example.name}"
+//   policy = "{\\"Version\\":\\"2012-10-17\\",\\"Statement\\":[{\\"Effect\\":\\"Allow\\",\\"Action\\":\\"s3:*\\"}]}"
+// }
+
+// resource "aws_instance" "example" {
+//   ami = "ami-a1b2c3d4"
+//   instance_type = "t2.micro"
+//   iam_instance_profile = "\${aws_iam_instance_profile.example.name}"
+//   depends_on = [null]
+// }`);
+// });
