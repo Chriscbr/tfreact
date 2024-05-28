@@ -96,6 +96,7 @@ export const setTextNodeValue = (node: TextNode, text: string): void => {
 };
 
 export function renderNode(rootNode: DOMElement): string {
+  console.log("renderNode called");
   const children = rootNode.childNodes.map((child) => {
     if (child.nodeName === "#text") {
       return child.nodeValue;
@@ -108,7 +109,12 @@ export function renderNode(rootNode: DOMElement): string {
         .map((label: string) => `"${label}"`)
         .join(" ");
       const args: string = Object.entries(attributes["args"])
-        .map(([key, value]) => `  ${key} = ${JSON.stringify(value)}`)
+        .map(([key, value]) => {
+          if (typeof value === "function") {
+            value = value();
+          }
+          return `  ${key} = ${JSON.stringify(value)}`;
+        })
         .join("\n");
       return `${type} ${labels} {\n${args}\n}`;
     }
@@ -116,5 +122,5 @@ export function renderNode(rootNode: DOMElement): string {
     throw new Error(`Unsupported node: ${child.nodeName}`);
   });
 
-  return children.join("");
+  return children.join("\n\n");
 }

@@ -1,11 +1,15 @@
-import React from "react";
+import React, { forwardRef } from "react";
 
-export type Props = {
+export type ResourceProps = {
   readonly type: string;
   readonly id: string;
   readonly args?: Record<string, any>;
 };
 
-export default function Resource({ type, id, args }: Props) {
-  return <hcl-block type="resource" labels={[type, id]} args={args} />;
-}
+export const Resource = forwardRef<React.ReactElement, ResourceProps>(
+  function Resource({ type, id, args }: ResourceProps, ref): JSX.Element {
+    return (
+      <hcl-block type="resource" labels={[type, id]} args={args} ref={ref} />
+    );
+  },
+);
