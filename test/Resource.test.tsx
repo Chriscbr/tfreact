@@ -93,6 +93,67 @@ resource "aws_instance" "example" {
 }`);
 });
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
+namespace aws {
+  type IamRoleProps = {
+    id: string | (() => [any, string]);
+    assume_role_policy: string;
+  };
+  export function IamRole({ id, assume_role_policy }: IamRoleProps) {
+    return (
+      <AutoResource type="aws_iam_role" id={id} args={{ assume_role_policy }} />
+    );
+  }
+
+  type IamInstanceProfile = {
+    id: string | (() => [any, string]);
+    role: string;
+  };
+  export function IamInstanceProfile({ id, role }: IamInstanceProfile) {
+    return (
+      <AutoResource type="aws_iam_instance_profile" id={id} args={{ role }} />
+    );
+  }
+
+  type IamRolePolicy = {
+    id: string | (() => [any, string]);
+    role: string;
+    policy: string;
+  };
+  export function IamRolePolicy({ id, role, policy }: IamRolePolicy) {
+    return (
+      <AutoResource
+        type="aws_iam_role_policy"
+        id={id}
+        args={{ role, policy }}
+      />
+    );
+  }
+
+  type Instance = {
+    id: string | (() => [any, string]);
+    ami: string;
+    instance_type: string;
+    iam_instance_profile: string;
+    depends_on: string[];
+  };
+  export function Instance({
+    id,
+    ami,
+    instance_type,
+    iam_instance_profile,
+    depends_on,
+  }: Instance) {
+    return (
+      <AutoResource
+        type="aws_instance"
+        id={id}
+        args={{ ami, instance_type, iam_instance_profile, depends_on }}
+      />
+    );
+  }
+}
+
 test("<Resource> with namer", () => {
   function App() {
     const [named, { myRole, myInstanceProfile, myRolePolicy }] =
@@ -100,40 +161,27 @@ test("<Resource> with namer", () => {
 
     const policy = {
       Version: "2012-10-17",
-      Statement: [
-        {
-          Effect: "Allow",
-          Action: "s3:*",
-        },
-      ],
+      Statement: [{ Effect: "Allow", Action: "s3:*" }],
     };
 
     return (
       <>
-        <AutoResource
-          id={named("myRole")}
-          type="aws_iam_role"
-          args={{ assume_role_policy: "..." }}
-        />
-        <AutoResource
-          type="aws_iam_instance_profile"
+        <aws.IamRole id={named("myRole")} assume_role_policy="..." />
+        <aws.IamInstanceProfile
           id={named("myInstanceProfile")}
-          args={{ role: myRole.name }}
+          role={myRole.name}
         />
-        <AutoResource
-          type="aws_iam_role_policy"
+        <aws.IamRolePolicy
           id={named("myRolePolicy")}
-          args={{ role: myRole.name, policy: JSON.stringify(policy) }}
+          role={myRole.name}
+          policy={JSON.stringify(policy)}
         />
-        <AutoResource
-          type="aws_instance"
+        <aws.Instance
           id="myInstance"
-          args={{
-            ami: "ami-a1b2c3d4",
-            instance_type: "t2.micro",
-            iam_instance_profile: myInstanceProfile.name,
-            depends_on: [myRolePolicy.name],
-          }}
+          ami="ami-a1b2c3d4"
+          instance_type="t2.micro"
+          iam_instance_profile={myInstanceProfile.name}
+          depends_on={[myRolePolicy.name]}
         />
       </>
     );
